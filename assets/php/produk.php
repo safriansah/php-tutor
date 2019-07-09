@@ -11,11 +11,20 @@ class Produk{
     
     function getAllData(){
         $no = 0;
-		$data = mysqli_query($this->koneksi,"select * from $this->table order by RAND()");
+        $query="select * from $this->table order by RAND()";
+		$data = mysqli_query($this->koneksi, $query);
 		while($d = mysqli_fetch_array($data)){
 		    $result[$no]=$d;
 		    $no++;
-		}
+        }
+        if($no<1) return null;
+        else return $result;
+    }
+
+    function getDataById($id){
+        $query="select * from $this->table where id='$id'";
+		$data=mysqli_query($this->koneksi, $query);
+        $result=mysqli_fetch_array($data);
         return $result;
     }
 
@@ -26,6 +35,11 @@ class Produk{
 		    $result[$no]=$d;
 		    $no++;
 		}
+        return $result;
+    }
+
+    function getRupiahFormat($angka){
+        $result = "Rp. ".number_format($angka,2,',','.');
         return $result;
     }
 }

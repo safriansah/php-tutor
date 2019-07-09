@@ -65,6 +65,7 @@ class User{
             return;
         }
         $_SESSION['uname']=$data[$this->col[0]];
+        $_SESSION['id']=$data['id'];
         $_SESSION['login']='user';
         echo("<script LANGUAGE='JavaScript'>
                 window.alert('Login berhasil');
@@ -82,6 +83,64 @@ class User{
         if(!isset($_SESSION['uname']) || $_SESSION['login']<>'user'){
             header("Location: ".$this->base_url."login.php");
         }
+    }
+
+    function getDataUser(){
+        $id=$_SESSION['id'];
+        $query="select * from $this->table where id='$id'";
+		$data=mysqli_query($this->koneksi, $query);
+        $result=mysqli_fetch_array($data);
+        return $result;
+    }
+
+    function updateDataUser(){
+        $id=$_SESSION['id'];
+        $email=$_POST['email'];
+        $tgl=$_POST['tgll'];
+        $jeka=$_POST['jeka'];
+        $alamat=$_POST['alamat'];
+        $kota=$_POST['kota'];
+        $telp=$_POST['telp'];
+        $paypal=$_POST['paypal'];
+        
+        $query="update $this->table set email='$email', tgl_lahir='$tgl', gender='$jeka', alamat='$alamat', kota='$kota', telp='$telp', paypal_id='$paypal' where id='$id'";
+        $res=mysqli_query($this->koneksi, $query);
+        if($res)
+        echo("<script LANGUAGE='JavaScript'>
+                window.alert('Update berhasil');
+                window.location.href='".$this->base_url."profile.php';
+            </script>");
+        else
+        echo("<script LANGUAGE='JavaScript'>
+                window.alert('Update gagal');
+                window.location.href='".$this->base_url."profile.php';
+            </script>");
+    }
+
+    function updatePassUser(){
+        $pass=$_POST['pswd'];
+        $conf=$_POST['copswd'];
+        if($pass<>$conf){
+            echo("<script LANGUAGE='JavaScript'>
+                window.alert('Konfirmasi password tidak sama');
+                window.location.href='".$this->base_url."profile.php';
+            </script>");
+            return;
+        }
+
+        $id=$_SESSION['id'];
+        $query="update $this->table set password=md5('$pass') where id='$id'";
+        $res=mysqli_query($this->koneksi, $query);
+        if($res)
+        echo("<script LANGUAGE='JavaScript'>
+                window.alert('Update berhasil');
+                window.location.href='".$this->base_url."profile.php';
+            </script>");
+        else
+        echo("<script LANGUAGE='JavaScript'>
+                window.alert('Update gagal');
+                window.location.href='".$this->base_url."profile.php';
+            </script>");
     }
 }
 ?>

@@ -1,6 +1,9 @@
 <?php 
 include'assets/php/koneksi.php';
 $user->cekLog();
+if(isset($_GET['kategori'])) $data=$produk->getAllByKategori($_GET['kategori']);
+else $data=$produk->getAllData();
+$jumlahKeranjang=$keranjang->getKeranjangCount();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +15,7 @@ $user->cekLog();
     <script src="assets/js/vendor/jquery-slim.min.js"></script>
     <script src="assets/js/vendor/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="assets/css/custom.css">
 </head>
 <body>
 
@@ -23,7 +27,7 @@ $user->cekLog();
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Keranjang</a>
+                <a class="nav-link" href="cart.php">Keranjang (<?=$jumlahKeranjang?>)</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Pembayaran</a>
@@ -31,7 +35,7 @@ $user->cekLog();
         </ul>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link text-light" href="#"><?=$_SESSION['uname']?></a>
+                <a class="nav-link text-light" href="profile.php"><?=$_SESSION['uname']?></a>
             </li>
             <li class="nav-item">
                 <form action="aksi.php" method="post">
@@ -40,46 +44,41 @@ $user->cekLog();
             </li> 
         </ul>
     </div>
-    </div>
 </nav>
 
-<div class="container py-3">
-    <div class="row">
+<div class="p-3 full-height">
+    <div class="row mw-100">
         <div class="col-md-2">
-            <p>Pilih Kategori:</p>
-            <div class="list-group list-group-flush">
+            <p class="bold">Pilih Kategori:</p>
+            <div class="list-group list-group-flush border-bottom">
             <?php
             foreach($kategori->getAllData() as $d){
             ?>
-                <a href="<?=$base_url?>index.php?kategori=<?=$d['id']?>" class="list-group-item list-group-item-action"><?=$d['nama']?></a>
+                <a href="<?=$base_url?>index.php?kategori=<?=$d['id']?>" class="list-group-item list-group-item-action <?php if($_GET['kategori']==$d['id']) echo"active"?>"><?=$d['nama']?></a>
             <?php } ?>
-            </div>  
+            </div>
         </div>
         <div class="col-md-10">
-            <h2>Halaman Produk</h2>
+            <h2>Halaman Produk <?php if(isset($_GET['kategori'])) echo $kategori->getNama($_GET['kategori']) ?></h2>
             <p>Pilih produk yang anda inginkan</p>
             <div class="row">
                 <?php
-                if(isset($_GET['kategori'])) $data=$produk->getAllByKategori($_GET['kategori']);
-                else $data=$produk->getAllData();
                 foreach($data as $d){
                 ?>
-                <div class="col-md-4 pb-3">
+                <div class="col-md-6 col-lg-4 pb-3">
                     <div class="card">
                         <div class="card-header"><?=$d['nama']?></div>
                         <div class="card-body">
-                            <p class="card-title">Harga: Rp. <?=$d['harga']?></p>
+                            <p class="card-title">Harga: <?=$produk->getRupiahFormat($d['harga'])?></p>
                             <p class="card-title">Kategori: <?=$kategori->getNama($d['id_kategori'])?></p>
                             <p class="card-text"><?=substr($d['keterangan'], 0, 128)?>...</p>
                         </div>
                         <div class="card-footer text-right">
-                            <form action="#" class="row" method="post">
-                                <div  class="col-md-6 py-1">
-                                    <input type="number" class="btn mw-100 text-center border-1" name="qty" id="qty" value="0">
-                                </div>
-                                <div  class="col-md-6 py-1">
-                                    <input type="submit" class="btn btn-success mw-100" value="Beli">
-                                </div>
+                            <form action="aksi.php" class="text-right" method="post">
+                                <input type="hidden" name="id" value="<?=$d['id']?>">
+                                <label for="qty" class="mx-1">Qty:</label>
+                                <input type="number" class="qty bg-primary text-white text-center mx-1" name="qty" id="qty" value="0">
+                                <input type="submit" name="addKeranjang" class="btn btn-success mx-1" value="Beli">
                             </form>
                         </div>
                     </div>

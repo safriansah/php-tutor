@@ -10,6 +10,18 @@ else if(isset($_POST['login'])){
 else if(isset($_POST['logout'])){
     $user->logout();
 }
+else if(isset($_POST['addKeranjang'])){
+    $keranjang->addKeranjang();
+}
+else if(isset($_POST['delKeranjang'])){
+    $keranjang->delKeranjang();
+}
+else if(isset($_POST['updateUser'])){
+    $user->updateDataUser();
+}
+else if(isset($_POST['updatePassUser'])){
+    $user->updatePassUser();
+}
 else{
     echo'Error 404';
 }

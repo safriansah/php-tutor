@@ -23,4 +23,7 @@ $produk=new Produk($koneksi, $base_url);
 
 include 'kategori.php';
 $kategori=new Kategori($koneksi, $base_url);
+
+include 'keranjang.php';
+$keranjang=new Keranjang($koneksi, $base_url);
 ?>
